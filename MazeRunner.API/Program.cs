@@ -12,8 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(MazeRunner.Application.Lib.GetAssembly()));
 //builder.Services.AddValidatorsFromAssembly(MazeRunner.Application.Lib.GetAssembly());
-builder.Services.AddSingleton<IMazesRepository>(new MazesRepository());
-builder.Services.AddSingleton<IGamesRepository>(new GamesRepository());
+builder.Services.AddSingleton<IMazesRepository>(new MazesRepositoryFake());
+builder.Services.AddSingleton<IGamesRepository>(new GamesRepositoryFake());
 
 var app = builder.Build();
 

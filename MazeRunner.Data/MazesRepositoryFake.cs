@@ -2,7 +2,7 @@
 
 namespace MazeRunner.Data;
 
-public class MazesRepository : IMazesRepository
+public class MazesRepositoryFake : IMazesRepository
 {
     private static IList<Maze> _mazes = new List<Maze>();
     public Maze Add(Maze obj)
@@ -20,9 +20,13 @@ public class MazesRepository : IMazesRepository
         return obj;
     }
 
-    public void Delete(int id)
+    public void Delete(Guid id)
     {
-        throw new NotImplementedException();
+        var obj = _mazes.FirstOrDefault(v => v.MazeId == id);
+        if (obj != null)
+        {
+            _mazes.Remove(obj);
+        }
     }
 
     public IEnumerable<Maze> Get()

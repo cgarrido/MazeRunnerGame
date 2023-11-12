@@ -2,7 +2,7 @@
 
 namespace MazeRunner.Data;
 
-public class GamesRepository : IGamesRepository
+public class GamesRepositoryFake : IGamesRepository
 {
     private static IList<Game> _games = new List<Game>();
     public Game Add(Game obj)
@@ -20,9 +20,13 @@ public class GamesRepository : IGamesRepository
         return obj;
     }
 
-    public void Delete(int id)
+    public void Delete(Guid id)
     {
-        throw new NotImplementedException();
+        var obj = _games.FirstOrDefault(v => v.MazeId == id);
+        if (obj != null)
+        {
+            _games.Remove(obj);
+        }
     }
 
     public IEnumerable<Game> Get()
