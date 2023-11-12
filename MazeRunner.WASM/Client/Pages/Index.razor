@@ -1,5 +1,7 @@
 ﻿@page "/"
-@using MazeRunner.WASM.Client.Models;
+@using MazeRunner.API.Shared.Reponses;
+@using MazeRunner.API.Shared.Requests;
+@using MazeRunner.API.Shared;
 @inject HttpClient _httpClient
 
 <PageTitle>Maze Runner</PageTitle>
@@ -58,7 +60,9 @@
         {
             var mazeInfo = await result.Content.ReadFromJsonAsync<CreateMazeResponse>();
             MazeId = mazeInfo!.MazeUid;
-            var gameData = new CreateGameRequest()
+
+            //Force to pass value as string
+            var gameData = new 
             {
                 Operation = "Start"
             };

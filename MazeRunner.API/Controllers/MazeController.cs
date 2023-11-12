@@ -1,6 +1,5 @@
-﻿using MazeRunner.API.Models;
-using MazeRunner.API.Models.Reponses;
-using MazeRunner.API.Models.Requests;
+﻿using MazeRunner.API.Shared.Reponses;
+using MazeRunner.API.Shared.Requests;
 using MazeRunner.Application.Commands;
 using MazeRunner.Domain;
 using MediatR;

@@ -1,11 +1,10 @@
-﻿using MazeRunner.API.Models;
-using MazeRunner.API.Models.Reponses;
-using MazeRunner.API.Models.Requests;
+﻿using MazeRunner.API.Shared;
+using MazeRunner.API.Shared.Reponses;
+using MazeRunner.API.Shared.Requests;
 using MazeRunner.Application.Commands;
 using MazeRunner.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace MazeRunner.API.Controllers;
 
@@ -29,10 +28,10 @@ public class GameController : ControllerBase
             {
                 MazeId = mazeUid
             });
-            var result = new CreateGameResponse() 
-            { 
+            var result = new CreateGameResponse()
+            {
                 MazeId = gameData.MazeId,
-                GameId= gameData.GameId,
+                GameId = gameData.GameId,
                 Completed = gameData.Completed,
                 CurrentPositionX = gameData.CurrentPositionX,
                 CurrentPositionY = gameData.CurrentPositionY,
@@ -52,25 +51,25 @@ public class GameController : ControllerBase
         });
 
         var result = new GetGameResponse()
+        {
+            Game = new Game()
             {
-                Game = new Game()
-                {
-                    MazeId = gameData.Item1.MazeId,
-                    GameId = gameData.Item1.GameId,
-                    Completed = gameData.Item1.Completed,
-                    CurrentPositionX = gameData.Item1.CurrentPositionX,
-                    CurrentPositionY = gameData.Item1.CurrentPositionY,
-                },
-                MazeBlockView = new MazeBlockView() 
-                { 
-                    CoordX = gameData.Item2.CoordX,
-                    CoordY = gameData.Item2.CoordY,
-                    NorthBlocked = gameData.Item2.NorthBlocked,
-                    SouthBlocked = gameData.Item2.SouthBlocked,
-                    WestBlocked = gameData.Item2.WestBlocked,
-                    EastBlocked = gameData.Item2.EastBlocked
-                }
-            };
+                MazeId = gameData.Item1.MazeId,
+                GameId = gameData.Item1.GameId,
+                Completed = gameData.Item1.Completed,
+                CurrentPositionX = gameData.Item1.CurrentPositionX,
+                CurrentPositionY = gameData.Item1.CurrentPositionY,
+            },
+            MazeBlockView = new MazeBlockView()
+            {
+                CoordX = gameData.Item2.CoordX,
+                CoordY = gameData.Item2.CoordY,
+                NorthBlocked = gameData.Item2.NorthBlocked,
+                SouthBlocked = gameData.Item2.SouthBlocked,
+                WestBlocked = gameData.Item2.WestBlocked,
+                EastBlocked = gameData.Item2.EastBlocked
+            }
+        };
 
         return Ok(result);
     }

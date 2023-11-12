@@ -1,4 +1,4 @@
-﻿namespace MazeRunner.API.Models;
+﻿namespace MazeRunner.API.Shared;
 
 public class MazeBlockView
 {

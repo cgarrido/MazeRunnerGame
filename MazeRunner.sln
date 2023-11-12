@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeRunner.Application", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeRunner.Domain", "MazeRunner.Domain\MazeRunner.Domain.csproj", "{46881622-E0C3-48E8-8A4A-C21CAC150225}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.Data", "MazeRunner.Data\MazeRunner.Data.csproj", "{38653096-2058-4874-8E03-7590E98A70D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeRunner.Data", "MazeRunner.Data\MazeRunner.Data.csproj", "{38653096-2058-4874-8E03-7590E98A70D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.WASM.Server", "MazeRunner.WASM\Server\MazeRunner.WASM.Server.csproj", "{A6452808-3B95-4B18-B8BD-AC25C6A611E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeRunner.WASM.Server", "MazeRunner.WASM\Server\MazeRunner.WASM.Server.csproj", "{A6452808-3B95-4B18-B8BD-AC25C6A611E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.WASM.Client", "MazeRunner.WASM\Client\MazeRunner.WASM.Client.csproj", "{D10B2DD4-3825-43B8-8640-E64EA0AF0779}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeRunner.WASM.Client", "MazeRunner.WASM\Client\MazeRunner.WASM.Client.csproj", "{D10B2DD4-3825-43B8-8640-E64EA0AF0779}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.API.Shared", "MazeRunner.API.Shared\MazeRunner.API.Shared.csproj", "{5B4A8244-F16F-4E3A-BE25-8C892850CB81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{D10B2DD4-3825-43B8-8640-E64EA0AF0779}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D10B2DD4-3825-43B8-8640-E64EA0AF0779}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D10B2DD4-3825-43B8-8640-E64EA0AF0779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B4A8244-F16F-4E3A-BE25-8C892850CB81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B4A8244-F16F-4E3A-BE25-8C892850CB81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B4A8244-F16F-4E3A-BE25-8C892850CB81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B4A8244-F16F-4E3A-BE25-8C892850CB81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

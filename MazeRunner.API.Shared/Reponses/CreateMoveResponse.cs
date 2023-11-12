@@ -1,4 +1,4 @@
-﻿namespace MazeRunner.API.Models.Reponses;
+﻿namespace MazeRunner.API.Shared.Reponses;
 
 public class CreateMoveResponse
 {

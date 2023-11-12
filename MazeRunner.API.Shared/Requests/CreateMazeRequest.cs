@@ -1,4 +1,4 @@
-﻿namespace MazeRunner.API.Models.Requests
+﻿namespace MazeRunner.API.Shared.Requests
 {
     public class CreateMazeRequest
     {

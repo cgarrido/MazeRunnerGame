@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MazeRunner.API.Shared\MazeRunner.API.Shared.csproj" />
     <ProjectReference Include="..\MazeRunner.Application\MazeRunner.Application.csproj" />
     <ProjectReference Include="..\MazeRunner.Data\MazeRunner.Data.csproj" />
   </ItemGroup>

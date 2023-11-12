@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MazeRunner.API.Models;
+namespace MazeRunner.API.Shared;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum GameOperationType
