@@ -6,7 +6,12 @@
 
 <PageTitle>Maze Runner</PageTitle>
 
-@if (!Loading)
+<button onclick="@(async () => await Start())">
+    Create Maze and Game
+</button>
+
+
+@if (GameLoaded)
 {
     <button onclick="@(async () => await Createmovement(GameOperationType.GoWest))">
         ←
@@ -25,7 +30,7 @@
         <div class="row">
             @for (int col = 0; col < WIDTH; col++)
             {
-                <div class="col-sm" style="height: 100px; border: 1px dashed black; background-color: @(VisitedCells.Contains(new Tuple<int, int>(col, row)) ? "lightgreen" : "salmon")">
+                <div class="col-sm" style="height: 100px; border: 1px dashed; @GetBorders(row, col); background-color: @((VisitedCells.Any(c => c.CoordX == col && c.CoordY == row)) ? "lightgreen" : "lightpink")">
                     @if (PositionX == col && PositionY == row)
                     {
                         <img alt="me" src="https://purepng.com/public/uploads/large/donald-trump-face-s6p.png" class="mx-auto d-block" style="max-height:95px; max-width:95px;" />
@@ -40,52 +45,74 @@
     }
 }
 @code {
-    private const int WIDTH = 6;
-    private const int HEIGHT = 6;
+    private const int WIDTH = 5;
+    private const int HEIGHT = 7;
     private const string API_URL = "https://localhost:7213/api";
     private int PositionX { get; set; } = 0;
     private int PositionY { get; set; } = 0;
-    private IList<Tuple<int, int>> VisitedCells = new List<Tuple<int, int>>() { new Tuple<int, int>(0, 0) };
-    private bool Loading { get; set; } = true;
+    private IList<MazeBlockView> VisitedCells { get; set; } = new List<MazeBlockView>(); //= new List<MazeBlockView>() { new MazeBlockView() { CoordX = 0, CoordY = 0 } };
+    private bool GameLoaded { get; set; } = false;
     private Guid MazeId { get; set; }
     private Guid GameId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    //await CreateMaze();
+    //    //await CreateGame();
+
+    //    //GameLoaded = false;
+    //}
+
+    private async Task Start()
     {
-        var mazeData = new CreateMazeRequest (){ Width = WIDTH, Height = HEIGHT };
-        var result = await _httpClient.PostAsJsonAsync($"https://localhost:7213/api/Maze", mazeData);
+        await CreateMaze();
+        await CreateGame();
+
+        GameLoaded = true;
+    }
+
+    private async Task CreateMaze()
+    {
+        var mazeData = new CreateMazeRequest() { Width = WIDTH, Height = HEIGHT };
+        var result = await _httpClient.PostAsJsonAsync($"{API_URL}/Maze", mazeData);
 
         //Maze
         if (result.IsSuccessStatusCode)
         {
             var mazeInfo = await result.Content.ReadFromJsonAsync<CreateMazeResponse>();
             MazeId = mazeInfo!.MazeUid;
-
-            //Force to pass value as string
-            var gameData = new 
-            {
-                Operation = "Start"
-            };
-
-            //Game
-            result = await _httpClient.PostAsJsonAsync($"{API_URL}/Game/{mazeInfo!.MazeUid}", gameData);
-            if (result.IsSuccessStatusCode)
-            {
-                var gameInfo = await result.Content.ReadFromJsonAsync<CreateGameResponse>();
-                GameId = gameInfo!.GameUid;
-
-                await Createmovement(GameOperationType.GoSouth);
-                await Createmovement(GameOperationType.GoSouth);
-                await Createmovement(GameOperationType.GoSouth);
-                await Createmovement(GameOperationType.GoSouth);
-                await Createmovement(GameOperationType.GoSouth);
-            }
-        }
-
-
-        Loading = false;
+        }        
     }
 
+    private async Task CreateGame()
+    {
+        //Force to pass value as string
+        var gameData = new
+        {
+            Operation = "Start"
+        };
+        VisitedCells = new List<MazeBlockView>();
+        var result = await _httpClient.PostAsJsonAsync($"{API_URL}/Game/{MazeId}", gameData);
+        if (result.IsSuccessStatusCode)
+        {
+            //Game created
+            var gameInfo = await result.Content.ReadFromJsonAsync<CreateGameResponse>();
+            GameId = gameInfo!.GameUid;
+
+            //Getting current position
+            result = await _httpClient.GetAsync($"{API_URL}/Game/{MazeId}/{GameId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var currentInfo = await result.Content.ReadFromJsonAsync<GetGameResponse>();
+                if (currentInfo != null && currentInfo.MazeBlockView != null && currentInfo.Game != null)
+                {
+                    VisitedCells.Add(currentInfo.MazeBlockView);
+                    PositionX = currentInfo.Game.CurrentPositionX;
+                    PositionY = currentInfo.Game.CurrentPositionY;
+                }
+            }
+        }
+    }
 
     private async Task Createmovement(GameOperationType operation)
     {
@@ -103,7 +130,7 @@
             {
                 PositionX = moveInfo.MazeBlockView.CoordX;
                 PositionY = moveInfo.MazeBlockView.CoordY;
-                VisitedCells.Add(new Tuple<int, int>(PositionX, PositionY));
+                VisitedCells.Add(moveInfo.MazeBlockView);
             }
         }
         else
@@ -111,8 +138,28 @@
             Console.WriteLine(result.RequestMessage);
 
             Console.WriteLine(await result.Content.ReadAsStringAsync());
-
         }
+    }
+
+    private string GetBorders(int row, int col)
+    {
+        var styles = string.Empty;
+
+        if (row == 0) styles += "border-top: 2px solid black; ";
+        if (row == HEIGHT - 1) styles += "border-bottom: 2px solid black; ";
+        if (col == 0) styles += "border-left: 2px solid black; ";
+        if (col == WIDTH - 1) styles += "border-right: 2px solid black; ";
+
+        var cell = VisitedCells.FirstOrDefault(c => c.CoordX == col && c.CoordY == row);
+        if (cell != null)
+        {
+            if (cell.NorthBlocked && row != 0) styles += "border-top: 5px solid firebrick; ";
+            if (cell.SouthBlocked && row != HEIGHT - 1) styles += "border-bottom: 5px solid firebrick; ";
+            if (cell.WestBlocked && col != 0) styles += "border-left: 5px solid firebrick; ";
+            if (cell.EastBlocked && col != WIDTH - 1) styles += "border-right: 5px solid firebrick; ";
+        }
+
+        return styles;
 
     }
 }

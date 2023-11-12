@@ -19,8 +19,8 @@ namespace MazeRunner.Application.Commands
         public CreateMazeCommandValidator()
         {
             RuleFor(x => x.Dimensions).NotNull().NotEmpty();
-            RuleFor(x => x.Dimensions!.Width).GreaterThan(MIN_WIDTH).LessThan(MAX_WIDTH);
-            RuleFor(x => x.Dimensions!.Height).GreaterThan(MIN_HEIGHT).LessThan(MAX_HEIGHT);
+            RuleFor(x => x.Dimensions!.Width).GreaterThanOrEqualTo(MIN_WIDTH).LessThanOrEqualTo(MAX_WIDTH);
+            RuleFor(x => x.Dimensions!.Height).GreaterThanOrEqualTo(MIN_HEIGHT).LessThanOrEqualTo(MAX_HEIGHT);
         }
     }
 
