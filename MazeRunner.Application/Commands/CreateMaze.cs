@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MazeRunner.Domain;
 using MediatR;
-using System.Xml.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace MazeRunner.Application.Commands
 {
@@ -27,15 +27,18 @@ namespace MazeRunner.Application.Commands
     public class CreateMazeCommandHandler : IRequestHandler<CreateMazeCommand, Maze>
     {
         public IMazesRepository _repository { get; set; }
-        public CreateMazeCommandHandler(IMazesRepository repository)
+        private ILogger<CreateMazeCommandHandler> _logger { get; set; }
+        public CreateMazeCommandHandler(IMazesRepository repository, ILogger<CreateMazeCommandHandler> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Maze> Handle(CreateMazeCommand cmd, CancellationToken cancellationToken)
         {
-            return await Task.Run(() => 
+            return await Task.Run(() =>
             {
+                _logger.LogDebug("Creating maze with width={0} height={1}", cmd.Dimensions!.Width, cmd.Dimensions!.Height);
                 var maze = new Maze()
                 {
                     Dimensions = cmd.Dimensions
@@ -44,13 +47,15 @@ namespace MazeRunner.Application.Commands
 
                 _repository.Add(maze);
 
+                _logger.LogInformation("Game '{0}' created", maze.MazeId);
                 return maze;
             });
         }
 
-        private void CreateCells(Maze maze) 
+        private void CreateCells(Maze maze)
         {
             //Generate empty maze with borders
+            _logger.LogDebug("Creating empty cells with border");
             maze.Cells = new MazeCell[maze.Dimensions!.Width, maze.Dimensions!.Height];
             for (int positionY = 0; positionY < maze.Dimensions!.Height; positionY++)
             {
@@ -70,6 +75,7 @@ namespace MazeRunner.Application.Commands
             }
 
             //Calculating tree with one path (0, 0) => (h, w)
+            _logger.LogDebug("Calculating success path and creating internal walls");
             var currentNode = maze.Cells[0, 0];
             maze.Cells[currentNode.CoordX, currentNode.CoordY].Visited = true;
             var nextNodes = GetNextNodes(maze.Cells, currentNode);
@@ -92,7 +98,7 @@ namespace MazeRunner.Application.Commands
         }
 
         private IList<MazeCell> GetNextNodes(MazeCell[,] nodes, MazeCell node)
-        { 
+        {
             var result = new List<MazeCell>();
             if (!node.NorthBlocked) AddNextNode(result, node, nodes[node.CoordX, node.CoordY - 1], node.NorthBlocked);
             if (!node.SouthBlocked) AddNextNode(result, node, nodes[node.CoordX, node.CoordY + 1], node.SouthBlocked);

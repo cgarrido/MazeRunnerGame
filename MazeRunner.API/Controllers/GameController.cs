@@ -13,15 +13,18 @@ namespace MazeRunner.API.Controllers;
 public class GameController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<GameController> _logger;
 
-    public GameController(IMediator mediator)
+    public GameController(IMediator mediator, ILogger<GameController> logger)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpPost("{mazeUid}")]
     public async Task<ActionResult> Post([FromBody] CreateGameRequest game, Guid mazeUid, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Create Game request received");
         if (game.Operation.Equals(GameOperationType.Start))
         {
             var gameData = await _mediator.Send(new CreateGameCommand()
@@ -44,6 +47,7 @@ public class GameController : ControllerBase
     [HttpGet("{mazeUid}/{gameUid}")]
     public async Task<ActionResult> Get(Guid mazeUid, Guid gameUid, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Get Game request received");
         var gameData = await _mediator.Send(new GetGameQuery()
         {
             MazeId = mazeUid,
@@ -78,6 +82,7 @@ public class GameController : ControllerBase
     [HttpPost("{mazeUid}/{gameUid}")]
     public async Task<ActionResult> PostMove([FromBody] CreateMoveRequest move, Guid mazeUid, Guid gameUid, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Create move request received");
         var gameData = await _mediator.Send(new CreateMoveCommand()
         {
             MazeId = mazeUid,

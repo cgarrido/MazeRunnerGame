@@ -12,15 +12,17 @@ namespace MazeRunner.API.Controllers;
 public class MazeController : ControllerBase
 {
     private readonly IMediator _mediator;
-
-    public MazeController(IMediator mediator)
+    private readonly ILogger<MazeController> _logger;
+    public MazeController(IMediator mediator, ILogger<MazeController> logger)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpPost()]
     public async Task<ActionResult> Post([FromBody] CreateMazeRequest dimensions, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Create Maze request received");
         var maze = await _mediator.Send(new CreateMazeCommand()
         {
             Dimensions = new MazeDimensions()

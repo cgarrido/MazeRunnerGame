@@ -1,9 +1,8 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using MazeRunner.Application.Exceptions;
+﻿using MazeRunner.Application.Exceptions;
 using MazeRunner.Application.Models;
 using MazeRunner.Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace MazeRunner.Application.Commands;
 
@@ -14,24 +13,24 @@ public class CreateMoveCommand : IRequest<Tuple<Game, MazeCell>>
     public GameOperationType Operation { get; set; }
 }
 
-public class CreateMoveCommandValidator : AbstractValidator<CreateMoveCommand>
-{
-    //Movimiento válido?? mejor en el otro lado no? si
-}
 public class CreateMoveCommandHandler : IRequestHandler<CreateMoveCommand, Tuple<Game, MazeCell>>
 {
     public IGamesRepository _gamesRepository { get; set; }
     public IMazesRepository _mazesRepository { get; set; }
-    public CreateMoveCommandHandler(IGamesRepository gamesRepository, IMazesRepository mazesRepository)
+    private ILogger<CreateMoveCommandHandler> _logger { get; set; }
+
+    public CreateMoveCommandHandler(IGamesRepository gamesRepository, IMazesRepository mazesRepository, ILogger<CreateMoveCommandHandler> logger)
     {
         _mazesRepository = mazesRepository ?? throw new ArgumentNullException(nameof(mazesRepository));
         _gamesRepository = gamesRepository ?? throw new ArgumentNullException(nameof(gamesRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<Tuple<Game, MazeCell>> Handle(CreateMoveCommand cmd, CancellationToken cancellationToken)
     {
         return await Task.Run(() =>
         {
+            _logger.LogDebug("Creating move with MazeId='{0}' GameId='{1}' Operation='{2}'", cmd.MazeId, cmd.GameId, cmd.Operation);
             var game = _gamesRepository.Get(cmd.GameId);
 
             if (game != null)
