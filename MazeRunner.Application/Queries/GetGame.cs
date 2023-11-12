@@ -12,11 +12,6 @@ public class GetGameQuery : IRequest<Tuple<Game, MazeCell>>
     public Guid GameId { get; set; }
 }
 
-public class GetGameQueryValidator : AbstractValidator<GetGameQuery>
-{
-    //TODO existe el maze??? existe el game? tiene sentido? o lanzo error abajo si no hay game
-}
-
 public class GetGameQueryHandler : IRequestHandler<GetGameQuery, Tuple<Game, MazeCell>>
 {
     public IGamesRepository _gamesRepository { get; set; }

@@ -10,10 +10,7 @@ public class CreateGameCommand : IRequest<Game>
     public Guid MazeId { get; set; }
     public GameOperationType Operation { get; set; }
 }
-public class CreateGameCommandValidator : AbstractValidator<CreateGameCommand>
-{
-    //TODO existe el maze???
-}
+
 public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Game>
 {
     public IGamesRepository _gamesRepository { get; set; }

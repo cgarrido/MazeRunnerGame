@@ -72,7 +72,7 @@
             if (result.IsSuccessStatusCode)
             {
                 var gameInfo = await result.Content.ReadFromJsonAsync<CreateGameResponse>();
-                GameId = gameInfo!.GameId;
+                GameId = gameInfo!.GameUid;
 
                 await Createmovement(GameOperationType.GoSouth);
                 await Createmovement(GameOperationType.GoSouth);

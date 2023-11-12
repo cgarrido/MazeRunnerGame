@@ -30,8 +30,8 @@ public class GameController : ControllerBase
             });
             var result = new CreateGameResponse()
             {
-                MazeId = gameData.MazeId,
-                GameId = gameData.GameId,
+                MazeUid = gameData.MazeId,
+                GameUid = gameData.GameId,
                 Completed = gameData.Completed,
                 CurrentPositionX = gameData.CurrentPositionX,
                 CurrentPositionY = gameData.CurrentPositionY,
@@ -54,8 +54,8 @@ public class GameController : ControllerBase
         {
             Game = new Game()
             {
-                MazeId = gameData.Item1.MazeId,
-                GameId = gameData.Item1.GameId,
+                MazeUid = gameData.Item1.MazeId,
+                GameUid = gameData.Item1.GameId,
                 Completed = gameData.Item1.Completed,
                 CurrentPositionX = gameData.Item1.CurrentPositionX,
                 CurrentPositionY = gameData.Item1.CurrentPositionY,
@@ -89,8 +89,8 @@ public class GameController : ControllerBase
         {
             Game = new Game()
             {
-                MazeId = gameData.Item1.MazeId,
-                GameId = gameData.Item1.GameId,
+                MazeUid = gameData.Item1.MazeId,
+                GameUid = gameData.Item1.GameId,
                 Completed = gameData.Item1.Completed,
                 CurrentPositionX = gameData.Item1.CurrentPositionX,
                 CurrentPositionY = gameData.Item1.CurrentPositionY,
