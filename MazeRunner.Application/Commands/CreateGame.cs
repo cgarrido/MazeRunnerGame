@@ -16,16 +16,21 @@ public class CreateGameCommandValidator : AbstractValidator<CreateGameCommand>
 }
 public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Game>
 {
-    public IGamesRepository _repository { get; set; }
-    public CreateGameCommandHandler(IGamesRepository repository)
+    public IGamesRepository _gamesRepository { get; set; }
+    public IMazesRepository _mazesRepository { get; set; }
+    public CreateGameCommandHandler(IGamesRepository gamesRepository, IMazesRepository mazesRepository)
     {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _mazesRepository = mazesRepository ?? throw new ArgumentNullException(nameof(mazesRepository));
+        _gamesRepository = gamesRepository ?? throw new ArgumentNullException(nameof(gamesRepository));
     }
 
     public async Task<Game> Handle(CreateGameCommand cmd, CancellationToken cancellationToken)
     {
         //TODO quitar await
         await Task.Delay(500);
+
+        var maze = _mazesRepository.Get(cmd.MazeId);
+        if(maze == null) throw new Exceptions.NotFoundException("Maze", cmd.MazeId);
 
         var game = new Game()
         {
@@ -36,7 +41,7 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Game>
             Completed = false
         };
 
-        _repository.Add(game);
+        _gamesRepository.Add(game);
         return game;
     }
 }

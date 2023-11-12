@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MazeRunner.Application.Commands;
+using MazeRunner.Application.Exceptions;
 using MazeRunner.Domain;
 using MediatR;
 
@@ -26,19 +27,18 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, Tuple<Game, Maz
         _gamesRepository = gamesRepository ?? throw new ArgumentNullException(nameof(gamesRepository));
     }
 
-    public async Task<Tuple<Game, MazeCell>> Handle(GetGameQuery request, CancellationToken cancellationToken)
+    public async Task<Tuple<Game, MazeCell>> Handle(GetGameQuery query, CancellationToken cancellationToken)
     {
         //TODO quitar await
         await Task.Delay(500);
 
-        var maze = _mazesRepository.Get(request.MazeId);
-        var game = _gamesRepository.Get(request.GameId);
+        var maze = _mazesRepository.Get(query.MazeId);
+        var game = _gamesRepository.Get(query.GameId);
 
-        if (game == null && maze != null)
-        {
-            var currentCell = maze.Cells![game!.CurrentPositionX, game.CurrentPositionY];
-            return new Tuple<Game, MazeCell>(game, currentCell);
-        }
-        throw new Exception("Game or maze not founds");
+        if (maze == null) throw new NotFoundException("Maze", query.MazeId);        
+        if (game == null) throw new NotFoundException("Game", query.GameId);
+
+        var currentCell = maze.Cells[game.CurrentPositionX, game.CurrentPositionY];
+        return new Tuple<Game, MazeCell>(game, currentCell);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MazeRunner.Application.Exceptions;
 using MazeRunner.Application.Models;
 using MazeRunner.Domain;
 using MediatR;
@@ -54,8 +55,9 @@ public class CreateMoveCommandHandler : IRequestHandler<CreateMoveCommand, Tuple
 
                 return new Tuple<Game, MazeCell>(game, currentCell);
             }
+            else throw new NotFoundException("Maze", cmd.MazeId);
         }
+        else throw new NotFoundException("Game", cmd.GameId);
 
-        throw new Exception("Game or maze not founds");
     }
 }

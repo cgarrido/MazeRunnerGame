@@ -98,21 +98,6 @@ namespace MazeRunner.Application.Commands
             if (!node.WestBlocked) AddNextNode(result, node, nodes[node.CoordX - 1, node.CoordY], node.WestBlocked);
             if (!node.EastBlocked) AddNextNode(result, node, nodes[node.CoordX + 1, node.CoordY], node.EastBlocked);
 
-
-
-            //if (!node.NorthBlocked && !nodes[node.CoordX, node.CoordY - 1].Visited)
-            //{
-            //    nodes[node.CoordX, node.CoordY - 1].Parent = node;
-            //    result.Add(nodes[node.CoordX, node.CoordY - 1]);
-
-            //}
-
-
-            //if (!node.NorthBlocked && !nodes[node.CoordX, node.CoordY - 1].Visited) result.Add(nodes[node.CoordX, node.CoordY - 1]);
-            //if (!node.SouthBlocked && !nodes[node.CoordX, node.CoordY + 1].Visited) result.Add(nodes[node.CoordX, node.CoordY + 1]);
-            //if (!node.EastBlocked && !nodes[node.CoordX + 1, node.CoordY].Visited) result.Add(nodes[node.CoordX + 1, node.CoordY]);
-            //if (!node.WestBlocked && !nodes[node.CoordX - 1, node.CoordY].Visited) result.Add(nodes[node.CoordX - 1, node.CoordY]);
-
             return result;
         }
 
@@ -163,19 +148,6 @@ namespace MazeRunner.Application.Commands
                     nodes[node.CoordX, node.CoordY].EastBlocked = true;
                 }
             }
-            //CreateWall(nodes, node, nodes[node.CoordX, node.CoordY - 1]);
-            //if (!node.SouthBlocked) CreateWall(nodes, node, nodes[node.CoordX, node.CoordY + 1]);
-            //if (!node.WestBlocked) CreateWall(nodes, node, nodes[node.CoordX - 1, node.CoordY]);
-            //if (!node.EastBlocked) CreateWall(nodes, node, nodes[node.CoordX + 1, node.CoordY]);
         }
-
-        //private bool CheckWall(MazeCell[,] nodes, MazeCell nodeFrom, MazeCell nodeTo)
-        //{
-        //    if (nodeTo != nodeFrom.Parent && nodeTo.Visited) return true;
-        //    //{
-        //    //    nodes[nodeTo.CoordX, nodeTo.CoordY].SouthBlocked = true;
-        //    //    nodes[nodeFrom.CoordX, nodeFrom.CoordY].NorthBlocked = true;
-        //    //}
-        //}
     }
 }
