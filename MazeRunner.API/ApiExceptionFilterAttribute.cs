@@ -73,11 +73,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleMoveException(ExceptionContext context, MoveException exception)
     {
-        //var details = new ValidationProblemDetails(new[] { exception.Message })
-        //{
-        //    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
-        //};
-
         var details = new ProblemDetails()
         {
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
