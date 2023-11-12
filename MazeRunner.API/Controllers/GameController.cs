@@ -78,7 +78,6 @@ public class GameController : ControllerBase
         return Ok(result);
     }
 
-
     [HttpPost("{mazeUid}/{gameUid}")]
     public async Task<ActionResult> PostMove([FromBody] CreateMoveRequest move, Guid mazeUid, Guid gameUid, CancellationToken cancellationToken)
     {

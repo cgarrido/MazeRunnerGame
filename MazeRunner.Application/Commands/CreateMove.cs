@@ -45,6 +45,7 @@ public class CreateMoveCommandHandler : IRequestHandler<CreateMoveCommand, Tuple
                     else if (cmd.Operation.Equals(GameOperationType.GoSouth) && !currentCell.SouthBlocked) currentCell = maze.Cells[game.CurrentPositionX, game.CurrentPositionY + 1];
                     else if (cmd.Operation.Equals(GameOperationType.GoWest) && !currentCell.WestBlocked) currentCell = maze.Cells[game.CurrentPositionX - 1, game.CurrentPositionY];
                     else if (cmd.Operation.Equals(GameOperationType.GoEast) && !currentCell.EastBlocked) currentCell = maze.Cells[game.CurrentPositionX + 1, game.CurrentPositionY];
+                    else if(cmd.Operation.Equals(GameOperationType.Start)) currentCell = maze.Cells[0, 0];
                     else throw new MoveException();
 
                     game.CurrentPositionX = currentCell.CoordX;
