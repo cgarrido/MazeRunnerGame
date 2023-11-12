@@ -1,0 +1,112 @@
+﻿@page "/"
+@using MazeRunner.WASM.Client.Models;
+@inject HttpClient _httpClient
+
+<PageTitle>Maze Runner</PageTitle>
+
+@if (!Loading)
+{
+    <button onclick="@(async () => await Createmovement(GameOperationType.GoWest))">
+        ←
+    </button>
+    <button onclick="@(async () => await Createmovement(GameOperationType.GoNorth))">
+        ↑
+    </button>
+    <button onclick="@(async () => await Createmovement(GameOperationType.GoEast))">
+        →
+    </button>
+    <button onclick="@(async () => await Createmovement(GameOperationType.GoSouth))">
+        ↓
+    </button>
+    @for (int row = 0; row < HEIGHT; row++)
+    {
+        <div class="row">
+            @for (int col = 0; col < WIDTH; col++)
+            {
+                <div class="col-sm" style="height: 100px; border: 1px dashed black; background-color: @(VisitedCells.Contains(new Tuple<int, int>(col, row)) ? "lightgreen" : "salmon")">
+                    @if (PositionX == col && PositionY == row)
+                    {
+                        <img alt="me" src="https://purepng.com/public/uploads/large/donald-trump-face-s6p.png" class="mx-auto d-block" style="max-height:95px; max-width:95px;" />
+                    }
+                    else if (row == HEIGHT - 1 && col == WIDTH - 1)
+                    {
+                        <img alt="goal" src="https://cdn-icons-png.flaticon.com/512/5579/5579533.png" class="mx-auto d-block" style="max-height:95px; max-width:95px;" />
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+@code {
+    private const int WIDTH = 3;
+    private const int HEIGHT = 3;
+    private const string API_URL = "https://localhost:7213/api";
+    private int PositionX { get; set; } = 0;
+    private int PositionY { get; set; } = 0;
+    private IList<Tuple<int, int>> VisitedCells = new List<Tuple<int, int>>() { new Tuple<int, int>(0, 0) };
+    private bool Loading { get; set; } = true;
+    private Guid MazeId { get; set; }
+    private Guid GameId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var mazeData = new CreateMazeRequest (){ Width = WIDTH, Height = HEIGHT };
+        var result = await _httpClient.PostAsJsonAsync($"https://localhost:7213/api/Maze", mazeData);
+
+        //Maze
+        if (result.IsSuccessStatusCode)
+        {
+            var mazeInfo = await result.Content.ReadFromJsonAsync<CreateMazeResponse>();
+            MazeId = mazeInfo!.MazeUid;
+            var gameData = new CreateGameRequest()
+            {
+                Operation = "Start"
+            };
+
+            //Game
+            result = await _httpClient.PostAsJsonAsync($"{API_URL}/Game/{mazeInfo!.MazeUid}", gameData);
+            if (result.IsSuccessStatusCode)
+            {
+                var gameInfo = await result.Content.ReadFromJsonAsync<CreateGameResponse>();
+                GameId = gameInfo!.GameId;
+                
+                await Createmovement(GameOperationType.GoSouth);
+                await Createmovement(GameOperationType.GoSouth);
+                await Createmovement(GameOperationType.GoSouth);
+                await Createmovement(GameOperationType.GoSouth);
+                await Createmovement(GameOperationType.GoSouth);
+            }
+        }
+
+
+        Loading = false;
+    }
+
+
+    private async Task Createmovement(GameOperationType operation)
+    {
+        var moveData = new CreateMoveRequest()
+        {
+                Operation = operation
+        };
+        var result = await _httpClient.PostAsJsonAsync($"{API_URL}/Game/{MazeId}/{GameId}", moveData);
+
+        if (result.IsSuccessStatusCode)
+        {
+            var moveInfo = await result.Content.ReadFromJsonAsync<CreateMoveResponse>();
+
+            if (moveInfo != null)
+            {
+                PositionX = moveInfo.MazeBlockView.CoordX;
+                PositionY = moveInfo.MazeBlockView.CoordY;
+                VisitedCells.Add(new Tuple<int, int>(PositionX, PositionY));
+            }
+        }
+        else
+        {
+            Console.WriteLine(result.RequestMessage);
+
+        }
+
+    }
+}
