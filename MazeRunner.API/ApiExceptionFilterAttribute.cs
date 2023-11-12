@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace MazeRunner.API;
 
@@ -20,6 +21,9 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
                 break;
             case NotFoundException notFoundEx:
                 HandleNotFoundException(context, notFoundEx);
+                break;
+            case MoveException moveEx:
+                HandleMoveException(context, moveEx);
                 break;
             default:
                 HandleUnknownException(context);
@@ -67,6 +71,24 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.ExceptionHandled = true;
     }
 
+    private void HandleMoveException(ExceptionContext context, MoveException exception)
+    {
+        //var details = new ValidationProblemDetails(new[] { exception.Message })
+        //{
+        //    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+        //};
+
+        var details = new ProblemDetails()
+        {
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+            Title = "Wrong move",
+            Detail = exception.Message
+        };
+
+        context.Result = new BadRequestObjectResult(details);
+
+        context.ExceptionHandled = true;
+    }
     private void HandleUnknownException(ExceptionContext context)
     {
         if (!context.ModelState.IsValid)

@@ -34,14 +34,22 @@ namespace MazeRunner.Application.Commands
 
         public async Task<Maze> Handle(CreateMazeCommand cmd, CancellationToken cancellationToken)
         {
-            //TODO quitar await
-            await Task.Delay(500);
-
-            var maze = new Maze()
+            return await Task.Run(() => 
             {
-                Dimensions = cmd.Dimensions
-            };
-                        
+                var maze = new Maze()
+                {
+                    Dimensions = cmd.Dimensions
+                };
+                CreateCells(maze);
+
+                _repository.Add(maze);
+
+                return maze;
+            });
+        }
+
+        private void CreateCells(Maze maze) 
+        {
             //Generate empty maze with borders
             maze.Cells = new MazeCell[maze.Dimensions!.Width, maze.Dimensions!.Height];
             for (int positionY = 0; positionY < maze.Dimensions!.Height; positionY++)
@@ -49,7 +57,7 @@ namespace MazeRunner.Application.Commands
                 for (int positionX = 0; positionX < maze.Dimensions!.Width; positionX++)
                 {
                     var cell = new MazeCell()
-                    { 
+                    {
                         CoordX = positionX,
                         CoordY = positionY,
                         WestBlocked = (positionX == 0),
@@ -65,15 +73,13 @@ namespace MazeRunner.Application.Commands
             var currentNode = maze.Cells[0, 0];
             maze.Cells[currentNode.CoordX, currentNode.CoordY].Visited = true;
             var nextNodes = GetNextNodes(maze.Cells, currentNode);
-            
-            var count = 0;
 
             //N nodes => N loops
             while (nextNodes.Any())
             {
-                //TODO: Corregir random, siempre coge el primero
                 var rnd = new Random();
                 var rndValue = rnd.Next(0, nextNodes.Count - 1);
+
                 //Choosing one node to visit (random) and creating walls
                 currentNode = nextNodes.ElementAt(rndValue);
                 nextNodes.Remove(currentNode);
@@ -82,12 +88,7 @@ namespace MazeRunner.Application.Commands
 
                 //Next nodes to visit
                 nextNodes = nextNodes.Union(GetNextNodes(maze.Cells, currentNode)).ToList();
-                count++;
             }
-
-            _repository.Add(maze);
-
-            return maze;
         }
 
         private IList<MazeCell> GetNextNodes(MazeCell[,] nodes, MazeCell node)

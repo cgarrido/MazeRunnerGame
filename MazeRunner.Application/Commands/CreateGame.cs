@@ -26,22 +26,22 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Game>
 
     public async Task<Game> Handle(CreateGameCommand cmd, CancellationToken cancellationToken)
     {
-        //TODO quitar await
-        await Task.Delay(500);
-
-        var maze = _mazesRepository.Get(cmd.MazeId);
-        if(maze == null) throw new Exceptions.NotFoundException("Maze", cmd.MazeId);
-
-        var game = new Game()
+        return await Task.Run(() =>
         {
-            CurrentPositionX = 0,
-            CurrentPositionY = 0,
-            MazeId = cmd.MazeId,
-            GameId = Guid.NewGuid(),
-            Completed = false
-        };
+            var maze = _mazesRepository.Get(cmd.MazeId);
+            if (maze == null) throw new Exceptions.NotFoundException("Maze", cmd.MazeId);
 
-        _gamesRepository.Add(game);
-        return game;
+            var game = new Game()
+            {
+                CurrentPositionX = 0,
+                CurrentPositionY = 0,
+                MazeId = cmd.MazeId,
+                GameId = Guid.NewGuid(),
+                Completed = false
+            };
+
+            _gamesRepository.Add(game);
+            return game; 
+        });       
     }
 }

@@ -29,16 +29,17 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, Tuple<Game, Maz
 
     public async Task<Tuple<Game, MazeCell>> Handle(GetGameQuery query, CancellationToken cancellationToken)
     {
-        //TODO quitar await
-        await Task.Delay(500);
+        return await Task.Run(() =>
+        {
+            var maze = _mazesRepository.Get(query.MazeId);
+            var game = _gamesRepository.Get(query.GameId);
 
-        var maze = _mazesRepository.Get(query.MazeId);
-        var game = _gamesRepository.Get(query.GameId);
+            if (maze == null) throw new NotFoundException("Maze", query.MazeId);
+            if (game == null) throw new NotFoundException("Game", query.GameId);
 
-        if (maze == null) throw new NotFoundException("Maze", query.MazeId);        
-        if (game == null) throw new NotFoundException("Game", query.GameId);
+            var currentCell = maze.Cells![game.CurrentPositionX, game.CurrentPositionY];
+            return new Tuple<Game, MazeCell>(game, currentCell);
 
-        var currentCell = maze.Cells[game.CurrentPositionX, game.CurrentPositionY];
-        return new Tuple<Game, MazeCell>(game, currentCell);
+        });
     }
 }
